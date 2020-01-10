@@ -1,8 +1,5 @@
-#conda: activate TRIAL18W06PY36websautomation
-#Test: Atom
-
 '''
-A community initiative to automatically create a python client for the Digikey set of API's 
+A community initiative to automatically create the python client for the Digikey set of API's 
 this application automates for the following API's 
     COMPLETED: productinformation
     COMPLETED: ordersupport
@@ -27,7 +24,8 @@ The platform prerequisites are java and python the package are gitpython
 
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
+
 import os
 import configparser
 config = configparser.ConfigParser()
@@ -54,10 +52,42 @@ if not os.path.exists(TMP_PATH):
 os.chdir(TMP_PATH)
 
 
+swaggerCodeGen_config_all = {
+    'product-information':{
+            "packageName" : "digikey_productinformation",
+            "projectName" : "community-digikey-api-productinformation",
+            "packageVersion" : "0.1.0",
+            "packageUrl" : "https://github.com/auphofBSF/xxxxxxxxxx.git",
+    }
+    , 'order-support':{
+            "packageName" : "digikey_ordersupport",
+            "projectName" : "community-digikey-api-ordersupport",
+            "packageVersion" : "0.1.0",
+            "packageUrl" : "https://github.com/auphofBSF/xxxxxxxxxx.git",
+    }
+}
+
+digikeyAPIdef_all = {
+            'product-information':
+                dict(apiGroup='product-information'
+                    ,apiSubGroup = 'partsearch'
+                    ,apiQuery='productdetails'
+                    ,urlNode='432'
+                    )
+            , 'order-support':
+                dict(apiGroup='order-support'
+                    ,apiSubGroup = 'orderdetails'
+                    ,apiQuery='orderhistory'
+                    ,urlNode='480'
+                    )
+
+}
+
+
 def getDigikeyAPIswaggerSpecJSON(destPath,**kwargs):
     # refererURL='https://developer.digikey.com/products/product-information/partsearch/productdetails?prod=true'
     refererURL='https://developer.digikey.com/products/{apiGroup}/{apiSubGroup}/{apiQuery}?prod=true'.format(**kwargs)
-    url = 'https://developer.digikey.com/node/432/oas-download'
+    url = 'https://developer.digikey.com/node/{urlNode}/oas-download'.format(**kwargs)
     r = requests.get(url, headers={
           'referer': refererURL
         , 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
@@ -75,36 +105,6 @@ def getDigikeyAPIswaggerSpecJSON(destPath,**kwargs):
 
 
 
-
-
-
-
-#download the SWAGGER.JSON for the required DIGIKEY API
-
-
-digikeyAPIdef =dict(apiGroup='product-information'
-                ,apiSubGroup = 'partsearch'
-                    ,apiQuery='productdetails')
-swaggerSpecFile=getDigikeyAPIswaggerSpecJSON(TMP_PATH, **digikeyAPIdef)
-
-#setup the CONFIG file
-
-
-swaggerCodeGen_config = {
-    "packageName" : "digikey_productinformation",
-    "projectName" : "community-digikey-api-productinformation",
-    "packageVersion" : "0.1.0",
-    "packageUrl" : "https://github.com/auphofBSF/xxxxxxxxxx.git",
-
-}
-configFile_swaggerCodegen='{projectName}-config-SwaggerCodegen.json'.format(**swaggerCodeGen_config)
-with open(configFile_swaggerCodegen, 'w') as outfile:
-    json.dump(swaggerCodeGen_config, outfile)
-
-logging.info("Created config file for Swagger Codegen: {}".format(configFile_swaggerCodegen))
-
-
-
 def wget(fileName,url):
     r = requests.get(url, headers={
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
@@ -114,77 +114,100 @@ def wget(fileName,url):
         f.write(r.content)
 
 
-#check if the swagger-codgen is present, else download
-if os.path.isfile('swagger-codegen-cli.jar'):
-    logging.info("Swagger-CodeGen already exists, no download required")
-else:
-    url = 'http://central.maven.org/maven2/io/swagger/swagger-codegen-cli/2.4.10/swagger-codegen-cli-2.4.10.jar'
-    wget('swagger-codegen-cli.jar' , url)
-    logging.info("Swagger-CodeGen downloaded from: {}".format(url))
 
 
-# execute swagger-codegen
-# Check Java is installed
-try:
-    version = subprocess.check_output(['java', '-version'], stderr=subprocess.STDOUT).decode('utf-8')
-    patternJavaVersion = '\"(\d+\.\d+).*\"'
-    logging.info("Java exists, version: {}".format(re.search(patternJavaVersion, version).groups()[0]))
-except:
-    logging.critical("Java existence cannot be confirmed -------------------")
+def build_api(digikeyAPIdef, swaggerCodeGen_config):
+    logging.info('BUILD STARTING for  {apiGroup}------------------------------------'.format(**digikeyAPIdef))
+
+    #download the SWAGGER.JSON for the required DIGIKEY API
+    swaggerSpecFile=getDigikeyAPIswaggerSpecJSON(TMP_PATH, **digikeyAPIdef)
+
+    #setup the CONFIG file
+    configFile_swaggerCodegen='{projectName}-config-SwaggerCodegen.json'.format(**swaggerCodeGen_config)
+    with open(configFile_swaggerCodegen, 'w') as outfile:
+        json.dump(swaggerCodeGen_config, outfile)
+
+    logging.info("Created config file for Swagger Codegen: {}".format(configFile_swaggerCodegen))
+
+    #check if the swagger-codgen is present, else download
+    if os.path.isfile('swagger-codegen-cli.jar'):
+        logging.info("Swagger-CodeGen already exists, no download required")
+    else:
+        url = 'http://central.maven.org/maven2/io/swagger/swagger-codegen-cli/2.4.10/swagger-codegen-cli-2.4.10.jar'
+        wget('swagger-codegen-cli.jar' , url)
+        logging.info("Swagger-CodeGen downloaded from: {}".format(url))
+
+    # execute swagger-codegen
+    # Check Java is installed
+    try:
+        version = subprocess.check_output(['java', '-version'], stderr=subprocess.STDOUT).decode('utf-8')
+        patternJavaVersion = '\"(\d+\.\d+).*\"'
+        logging.info("Java exists, version: {}".format(re.search(patternJavaVersion, version).groups()[0]))
+    except:
+        logging.critical("Java existence cannot be confirmed -------------------")
+
+    # Do CodeGen
+    codeGenRunCommand = [
+        'java'
+        , '-jar'
+        , 'swagger-codegen-cli.jar'
+        , 'generate'
+        , '--input-spec',  swaggerSpecFile
+        , '-l', 'python'
+        , '--output', os.path.join(DEST_PATH,'{projectName}'.format(**swaggerCodeGen_config))
+        , '--config', configFile_swaggerCodegen
+        ]
+
+    try:
+        logging.info('STARTING Code generator for a Swagger API created, project name: {projectName}'.format(**swaggerCodeGen_config))
+        procCall = subprocess.run(codeGenRunCommand,stdout=subprocess.PIPE,stderr=subprocess.PIPE) #, shell=True)
+        logging.info('COMPLETED Code generator for a Swagger API created, project name: {projectName}'.format(**swaggerCodeGen_config))
+        logging.debug('----- STDOUT = \n{}'.format(procCall.stdout.decode('utf-8')))
+        logging.debug('----- STDERR = \n{}'.format(procCall.stderr.decode('utf-8')))
+        if procCall.returncode != 0:
+            message="Failure performing Swagger Codegen: Return Code:{}".format(procCall.returncode)
+            logging.critical(message)
+            logging.critical('----- STDOUT = \n{}'.format(procCall.stdout.decode('utf-8')))
+            logging.critical('----- STDERR = \n{}'.format(procCall.stderr.decode('utf-8')))
+ 
+            raise Exception(message)
+
+    except Exception as e:
+        logging.critical("Failure performing Swagger Codegen: Exception:{}".format(e))
+        raise Exception("Failure performing Swagger Codegen: Exception:{}".format(e))
 
 
-
-codeGenRunCommand = [
-       'java'
-     , '-jar'
-     , 'swagger-codegen-cli.jar'
-     , 'generate'
-     , '--input-spec',  swaggerSpecFile
-     , '-l', 'python'
-     , '--output', os.path.join(DEST_PATH,'{projectName}'.format(**swaggerCodeGen_config))
-     , '--config', configFile_swaggerCodegen
-    ]
-
-try:
-    logging.info('STARTING Code generator for a Swagger API created, project name: {projectName}'.format(**swaggerCodeGen_config))
-    procCall = subprocess.run(codeGenRunCommand,stdout=subprocess.PIPE,stderr=subprocess.PIPE) #, shell=True)
-    logging.info('COMPLETED Code generator for a Swagger API created, project name: {projectName}'.format(**swaggerCodeGen_config))
-    logging.info('----- STDOUT = \n{}'.format(procCall.stdout.decode('utf-8')))
-    logging.info('----- STDERR = \n{}'.format(procCall.stderr.decode('utf-8')))
-    if procCall.returncode != 0:
-        message="Failure performing Swagger Codegen: Return Code:{}".format(procCall.returncode)
+    try:
+        # Copy Codgen Config, swagger spec and codegen Run command into swagger folder
+        buildConfigDir = os.path.join(DEST_PATH,'{projectName}'.format(**swaggerCodeGen_config),'.build-config')
+        os.makedirs(buildConfigDir)
+        shutil.copy(configFile_swaggerCodegen,dst=buildConfigDir)
+        shutil.copy(swaggerSpecFile,dst=buildConfigDir)
+        shutil.copy(__file__, dst=buildConfigDir) # Keep a copy of this script that built the client
+        logging.info('----- COPIED build and/or specification files into project')
+    except Exception as e:
+        message='Failed to copy Build and/or Specification file cause Exception:{}'.format(e)
         logging.critical(message)
         raise Exception(message)
 
-except Exception as e:
-    logging.critical("Failure performing Swagger Codegen: Exception:{}".format(e))
-    raise Exception("Failure performing Swagger Codegen: Exception:{}".format(e))
 
 
+    # GIT initialize the repo and commit #
+    logging.info('START Code Version control enabling under GIT')
+
+    gitrepo = git.Repo.init(os.path.join(DEST_PATH,'{projectName}'.format(**swaggerCodeGen_config)))
+    gitrepo.git.add(all=True)
+    gitrepo.git.commit('-m','[INITIAL]Swagger codegen from digikey swagger specification')
+    assert len(gitrepo.untracked_files)==0
+
+    logging.info('---- COMPLETE Code Version control under GIT -------------------------------')
+    logging.info('BUILD IS NOW COMPLETE for  {apiGroup}------------------------------------'.format(**digikeyAPIdef))
 
 
+apiBuildList = ['product-information','order-support']
+# apiBuildList = ['order-support']
 
-try:
-    # Copy Codgen Config, swagger spec and codegen Run command into swagger folder
-    buildConfigDir = os.path.join(DEST_PATH,'{projectName}'.format(**swaggerCodeGen_config),'.build-config')
-    os.makedirs(buildConfigDir)
-    shutil.copy(configFile_swaggerCodegen,dst=buildConfigDir)
-    shutil.copy(swaggerSpecFile,dst=buildConfigDir)
-    shutil.copy(__file__, dst=buildConfigDir) # Keep a copy of this script that built the client
-    logging.info('----- COPIED build and/or specification files into project')
-except Exception as e:
-    message='Failed to copy Build and/or Specification file cause Exception:{}'.format(e)
-    logging.critical(message)
-    raise Exception(message)
+for api in apiBuildList:
+    build_api(digikeyAPIdef_all[api], 
+            swaggerCodeGen_config_all[api])
 
-
-
-# GIT initialize the repo and commit #
-logging.info('START Code Version control enabling under GIT')
-
-gitrepo = git.Repo.init(os.path.join(DEST_PATH,'{projectName}'.format(**swaggerCodeGen_config)))
-gitrepo.git.add(all=True)
-gitrepo.git.commit('-m','[INITIAL]Swagger codegen from digikey swagger specification')
-assert len(gitrepo.untracked_files)==0
-
-logging.info('---- COMPLETE Code Version control under GIT -------------------------------')
