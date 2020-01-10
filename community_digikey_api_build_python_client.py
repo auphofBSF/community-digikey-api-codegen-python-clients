@@ -32,7 +32,7 @@ import os
 import configparser
 config = configparser.ConfigParser()
 config['custom'] = {
-    'DEST_PATH': '.'
+    'DEST_PATH': '..'
     , 'TMP_PATH': r'.\tmp'
     }
 config.read(os.path.join('.env','config.ini'))
