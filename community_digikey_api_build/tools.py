@@ -180,10 +180,23 @@ def build_api(digikeyAPIdef, swaggerCodeGen_config):
     try:
         # Copy Codgen Config, swagger spec and codegen Run command into swagger folder
         buildConfigDir = os.path.join(DEST_PATH,'{projectName}'.format(**swaggerCodeGen_config),'.build-config')
-        os.makedirs(buildConfigDir)
-        shutil.copy(configFile_swaggerCodegen,dst=buildConfigDir)
-        shutil.copy(swaggerSpecFile,dst=buildConfigDir)
-        shutil.copy(__file__, dst=buildConfigDir) # Keep a copy of this script that built the client
+        if not os.path.exists(buildConfigDir):
+            os.makedirs(buildConfigDir)
+
+        def overwriteCopy(srcFile,dstPath):
+            dstFullFilePath=os.path.join(dstPath,os.path.basename(srcFile))
+            if os.path.exists(dstFullFilePath):
+                os.remove(dstFullFilePath)
+            try:
+                shutil.copy(srcFile,dst=dstPath)
+            except Exception as e:
+                message='Failed to copy src:{} to destPath{} result Exception:{}'.format(srcFile,dstPath,e)
+                logging.critical(message)
+                raise e
+
+        overwriteCopy(configFile_swaggerCodegen,dstPath=buildConfigDir)
+        overwriteCopy(swaggerSpecFile,dstPath=buildConfigDir)
+        overwriteCopy(__file__, dstPath=buildConfigDir) # Keep a copy of this script that built the client
         logging.info('----- COPIED build and/or specification files into project')
     except Exception as e:
         message='Failed to copy Build and/or Specification file cause Exception:{}'.format(e)
@@ -195,19 +208,36 @@ def build_api(digikeyAPIdef, swaggerCodeGen_config):
     # GIT initialize the repo and commit #
     logging.info('START Code Version control enabling under GIT')
 
-    gitrepo = git.Repo.init(os.path.join(DEST_PATH,'{projectName}'.format(**swaggerCodeGen_config)))
-    gitrepo.git.add(all=True)
-    gitrepo.git.commit('-m','[INITIAL]Swagger codegen from digikey swagger specification')
-    assert len(gitrepo.untracked_files)==0
+    #TODO: Check if git already initiated
+
+    try: 
+        gitrepo = git.Repo(os.path.join(DEST_PATH,'{projectName}'.format(**swaggerCodeGen_config)))
+        logging.info('     Code Version control already a GIT repository')
+    except git.InvalidGitRepositoryError:
+        gitrepo = git.Repo.init(os.path.join(DEST_PATH,'{projectName}'.format(**swaggerCodeGen_config)))
+        logging.info('     Code Version control initialized as a GIT repository')
+    if len(gitrepo.untracked_files) > 0:
+        gitrepo.git.add(all=True)
+        gitrepo.git.commit('-m','[INITIAL]Swagger codegen from digikey swagger specification')
+        logging.info('     Code Version control committing changes to GIT repository')
+    else:
+        logging.info('     Code Version control no changes to commit to GIT repository')
+    # assert len(gitrepo.untracked_files)==0
 
     logging.info('---- COMPLETE Code Version control under GIT -------------------------------')
     logging.info('BUILD IS NOW COMPLETE for  {apiGroup}------------------------------------'.format(**digikeyAPIdef))
+    return({
+            'project':swaggerCodeGen_config['projectName'],
+            'locationPath': os.path.join(DEST_PATH,'{projectName}'.format(
+                                            **swaggerCodeGen_config))
+        })
 
 
-apiBuildList = ['product-information','order-support']
-# apiBuildList = ['order-support']
-
-for api in apiBuildList:
-    build_api(digikeyAPIdef_all[api], 
-            swaggerCodeGen_config_all[api])
-
+def subprocess_run(subprocessCMD, shell=False):
+    """
+    Run a subprocess command, passed by dict of arguments. Executes by default with shell=False, and then logging STDOUT and STDERR
+    """
+    procCall = subprocess.run(subprocessCMD,stdout=subprocess.PIPE,stderr=subprocess.PIPE, shell=shell)
+    logging.info('----- STDOUT = \n{}'.format(procCall.stdout.decode('utf-8')))
+    logging.info('----- STDERR = \n{}'.format(procCall.stderr.decode('utf-8')))
+    return procCall
