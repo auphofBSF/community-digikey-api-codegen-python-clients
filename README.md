@@ -6,14 +6,14 @@ this application automates for the following API's.
     TODO:barcode
     TODO:Ordering
 
-As they are all specified individually they are seperated into seperate projects, this project, the builder,  creates all the api projects.
+As they are all specified individually they are generated into individual projects and thus individual python module names. This project, the builder,  generates  all the api projects.
 
 The Digikey API specification in Swagger.json format is the basis of the generated python clients for each api
-The generation is done by using the Swagger Codegen, a java application.
+The generation for each API is done by using the Swagger Codegen, a java application.
 
-This script then performs a fresh build of the 
+When this package is installed its only purpose is to perform the fresh CodeGens of each api and then install them. At present they are installed in an editable manner
 
-The platform prerequisites are java and python the package are gitpython
+The platform prerequisites are java and for python the package requirement is gitpython
 
 - API version: v3
 - Package version: 0.1.0
@@ -25,14 +25,12 @@ Python Package GitPython
 Java 1.8+
 
 ## Installation & Usage
-### pip install
+### pip install -e .
 
 If the python package is hosted on Github, you can install directly from Github
 
 ```sh
-pip install git+https://github.com/GIT_USER_ID/GIT_REPO_ID.git
+pip install -e git+https://github.com/auphofBSF/community-digikey-api-build-python-client.git
 ```
-(you may need to run `pip` with root permission: `sudo pip install git+https://github.com/GIT_USER_ID/GIT_REPO_ID.git`)
+(you may need to run `pip` with root permission: `sudo pip install -e git+https://github.com/auphofBSF/community-digikey-api-build-python-client.git`
 
-
-TODO: further instructions
