@@ -1,4 +1,6 @@
 # community-digikey-api-build-python-client
+---------
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZHPF7ZLDCYEYY&source=url)
 A community initiative to automatically create  python clients for the Digikey set of API's 
 this application automates for the following API's.
 
@@ -37,7 +39,8 @@ Python Package GitPython
 Java 1.8+
 
 ## Installation & Usage
-### pip install -e .
+
+`pip install -e .`
 
 If the python package is hosted on Github, you can install directly from Github
 
