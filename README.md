@@ -40,8 +40,13 @@ Python Package GitPython
 Java 1.8+
 
 ## Installation & Usage
-
-`pip install -e .`
+TODO: improve this installation
+```sh
+git clone .......
+cd .........
+configure .env/config.ini
+pip install -e .`
+```
 
 If the python package is hosted on Github, you can install directly from Github
 

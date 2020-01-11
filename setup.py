@@ -14,6 +14,8 @@
 
 
 from setuptools import setup, find_packages  # noqa: H301
+from setuptools.command.develop import develop
+from setuptools.command.install import install
 
 NAME = "community-digikey-api-builder-python-client"
 VERSION = "0.1.0"
@@ -25,9 +27,59 @@ VERSION = "0.1.0"
 # 
 
 REQUIRES = [
-    "GitPython",
+    "gitpython",
 ]
     
+
+class PostDevelopCommand(develop):
+    """Post-installation for development mode."""
+    def run(self):
+        # check_call("apt-get install this-package".split())
+        print("----Custom Develop - pre develop.run")
+        develop.run(self)
+        print("----Custom Develop - post develop.run")
+        digikeyAPIclientGenerate()
+
+class PostInstallCommand(install):
+    """Post-installation for installation mode."""
+    def run(self):
+        # check_call("apt-get install this-package".split())
+        print("----Custom Install - pre install.run")
+        install.run(self)
+        print("----Custom Install - post install.run")
+        digikeyAPIclientGenerate()
+
+
+
+def digikeyAPIclientGenerate():
+
+    from community_digikey_api_build import tools
+
+    # Currently supported API's
+    apiBuildList = ['product-information','order-support']
+    # apiBuildList = ['order-support']
+
+    #Generate Digikey API python clients
+    builds= [
+    tools.build_api(tools.digikeyAPIdef_all[api], 
+                tools.swaggerCodeGen_config_all[api])
+        for api in apiBuildList
+    ]
+
+    # Install the builds generated
+    import os, subprocess
+    rememberDir = os.getcwd()
+    for build in builds:
+        os.chdir(build['locationPath'])
+        subprocessCMD = [
+        'pip3'
+        , 'install'
+        , '--editable'
+        , '.'
+        ]
+        tools.subprocess_run(subprocessCMD)
+    os.chdir(rememberDir)
+
 
 setup(
     name=NAME,
@@ -36,6 +88,10 @@ setup(
     author_email="auphofBSF_GH1@blacksheepfarm.co.nz",
     url="https://github.com/auphofBSF/community-digikey-api-build-python-client",
     keywords=["Swagger", "Digikey Api"],
+    cmdclass={
+        'develop': PostDevelopCommand,
+        'install': PostInstallCommand,
+        },
     install_requires=REQUIRES,
     packages=find_packages(),
     include_package_data=True,
@@ -44,30 +100,4 @@ setup(
     """
 )
 
-from community_digikey_api_build import tools
-
-# Currently supported API's
-apiBuildList = ['product-information','order-support']
-# apiBuildList = ['order-support']
-
-#Generate Digikey API python clients
-builds= [
-  tools.build_api(tools.digikeyAPIdef_all[api], 
-            tools.swaggerCodeGen_config_all[api])
-    for api in apiBuildList
-]
-
-# Install the builds generated
-import os, subprocess
-rememberDir = os.getcwd()
-for build in builds:
-    os.chdir(build['locationPath'])
-    subprocessCMD = [
-    'pip'
-    , 'install'
-    , '--editable'
-    , '.'
-    ]
-    tools.subprocess_run(subprocessCMD)
-os.chdir(rememberDir)
     

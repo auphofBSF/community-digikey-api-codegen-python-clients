@@ -15,12 +15,6 @@ The platform prerequisites are java and python the package are gitpython
 
 
 '''
-# def is_interactive():
-#     import __main__ as main
-#     return not hasattr(main, '__file__')
-# if not is_interactive():
-#     %load_ext autoreload
-#     %autoreload 2
 
 
 import logging
@@ -43,7 +37,9 @@ import git
 import json
 import re
 
-logging.info("Build Directory for Digikey API's: {buildDir}".format(buildDir=TMP_PATH))
+
+logging.debug("Build Digikey API Clients: module: tools.py is loading ......")
+logging.debug("Build Directory for Digikey API's: {buildDir}".format(buildDir=TMP_PATH))
 
 envExecureRoot = os.getcwd()
 
@@ -119,6 +115,9 @@ def wget(fileName,url):
 def build_api(digikeyAPIdef, swaggerCodeGen_config):
     logging.info('BUILD STARTING for  {apiGroup}------------------------------------'.format(**digikeyAPIdef))
 
+    if not os.path.exists(TMP_PATH):
+        logging.info('making TMP directory:  {}------------------------------------'.format(TMP_PATH))
+        os.mkdir(TMP_PATH)
     #download the SWAGGER.JSON for the required DIGIKEY API
     swaggerSpecFile=getDigikeyAPIswaggerSpecJSON(TMP_PATH, **digikeyAPIdef)
 
