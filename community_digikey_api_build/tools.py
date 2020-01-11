@@ -57,13 +57,13 @@ swaggerCodeGen_config_all = {
             "packageName" : "digikey_productinformation",
             "projectName" : "community-digikey-api-productinformation",
             "packageVersion" : "0.1.0",
-            "packageUrl" : "https://github.com/auphofBSF/xxxxxxxxxx.git",
+            "packageUrl" : "https://github.com/auphofBSF/community-digikey-api-productinformation.git",
     }
     , 'order-support':{
             "packageName" : "digikey_ordersupport",
             "projectName" : "community-digikey-api-ordersupport",
             "packageVersion" : "0.1.0",
-            "packageUrl" : "https://github.com/auphofBSF/xxxxxxxxxx.git",
+            "packageUrl" : "https://github.com/auphofBSF/community-digikey-api-ordersupport.git",
     }
 }
 
