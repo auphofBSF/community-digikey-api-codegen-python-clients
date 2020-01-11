@@ -21,7 +21,7 @@ The platform prerequisites are java and for python the package requirement is gi
 
 # Any donations are always graciously accepted
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)]([ZHPF7ZLDCYEYY](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZHPF7ZLDCYEYY&source=url))
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZHPF7ZLDCYEYY&source=url))
 
 ---------------------
 
