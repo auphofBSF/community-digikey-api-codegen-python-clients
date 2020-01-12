@@ -13,6 +13,7 @@ env/
 .env/
 .build/
 build/
+.tmp/
 develop-eggs/
 dist/
 downloads/

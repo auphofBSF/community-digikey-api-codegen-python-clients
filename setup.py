@@ -61,7 +61,7 @@ def digikeyAPIclientGenerate():
 
     #Generate Digikey API python clients
     generated= [
-    tools.generate_api(tools.digikeyAPIdef_all[api], 
+    tools.codeGen_api(tools.digikeyAPIdef_all[api], 
                 tools.swaggerCodeGen_config_all[api])
         for api in apiGenerateList
     ]
