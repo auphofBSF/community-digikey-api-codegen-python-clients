@@ -5,12 +5,14 @@
 A community initiative to automatically create  python clients for the Digikey set of API's 
 this application automates for the following API's.
 
-![Overview Diagram](https://github.com/auphofBSF/community-digikey-api-v3-lite/blob/DEV/docs/overview-community-digikey-api-v3.svg "Overview Diagram")
-
     COMPLETED: productinformation
     COMPLETED: ordersupport
     TODO:barcode
     TODO:Ordering
+
+
+![Overview Diagram](https://github.com/auphofBSF/community-digikey-api-v3-lite/blob/DEV/docs/overview-community-digikey-api-v3.svg "Overview Diagram")
+
 
 As they are all specified individually they are generated into individual projects and thus individual python module names. This project, the builder,  generates  all the api projects.
 
