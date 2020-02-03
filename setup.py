@@ -28,6 +28,7 @@ VERSION = "0.1.0"
 
 REQUIRES = [
     "gitpython",
+    "requests",
 ]
     
 

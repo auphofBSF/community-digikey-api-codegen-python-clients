@@ -60,6 +60,7 @@ if not os.path.exists(TMP_PATH):
     os.makedirs(TMP_PATH)
 os.chdir(TMP_PATH)
 
+swaggerCodeGenURL = 'https://repo1.maven.org/maven2/io/swagger/swagger-codegen-cli/2.4.1/swagger-codegen-cli-2.4.1.jar'
 
 swaggerCodeGen_config_all = {
     'product-information':{
@@ -145,9 +146,12 @@ def codeGen_api(digikeyAPIdef, swaggerCodeGen_config):
     if os.path.isfile('swagger-codegen-cli.jar'):
         logging.info("Swagger-CodeGen already exists, no download required")
     else:
-        url = 'http://central.maven.org/maven2/io/swagger/swagger-codegen-cli/2.4.10/swagger-codegen-cli-2.4.10.jar'
-        wget('swagger-codegen-cli.jar' , url)
-        logging.info("Swagger-CodeGen downloaded from: {}".format(url))
+        try:
+            url = swaggerCodeGenURL
+            wget('swagger-codegen-cli.jar' , url)
+            logging.info("Swagger-CodeGen downloaded from: {}".format(url))
+        except Exception as e:
+            logging.critical(f"Unable to download swaggerCodegen from {url} :exception: {e}")
 
     # execute swagger-codegen
     # Check Java is installed
