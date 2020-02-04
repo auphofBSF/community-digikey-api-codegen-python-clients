@@ -58,11 +58,11 @@ pip install -e .`
 If the python package is hosted on Github, you can install directly from Github
 
 ```sh
-pip install -e git+https://github.com/auphofBSF/community-digikey-api-codegen-python-clients.git/community-digikey-api-codegen-python-clients
+pip install -e git+https://github.com/auphofBSF/community-digikey-api-codegen-python-clients.git#egg=community-digikey-api-codegen-python-clients
 ```
 you may need to run `pip` with root permission: 
 ```
-sudo pip install -e git+https://github.com/auphofBSF/community-digikey-api-codegen-python-clients.git`
+sudo pip install -e git+https://github.com/auphofBSF/community-digikey-api-codegen-python-clients.git#egg=community-digikey-api-codegen-python-clients`
 ```
 
 ## Customization
