@@ -61,6 +61,7 @@ if not os.path.exists(TMP_PATH):
 os.chdir(TMP_PATH)
 
 swaggerCodeGenURL = 'https://repo1.maven.org/maven2/io/swagger/swagger-codegen-cli/2.4.10/swagger-codegen-cli-2.4.10.jar'
+_, swagger_codegen_cli_version_jar = os.path.split(swaggerCodeGenURL)
 
 swaggerCodeGen_config_all = {
     'product-information':{
@@ -143,13 +144,13 @@ def codeGen_api(digikeyAPIdef, swaggerCodeGen_config):
     logging.info("Created config file for Swagger Codegen: {}".format(configFile_swaggerCodegen))
 
     #check if the swagger-codgen is present, else download
-    if os.path.isfile('swagger-codegen-cli.jar'):
-        logging.info("Swagger-CodeGen already exists, no download required")
+    if os.path.isfile(swagger_codegen_cli_version_jar):
+        logging.info(f"Swagger-CodeGen: {swagger_codegen_cli_version_jar} already exists, no download required")
     else:
         try:
             url = swaggerCodeGenURL
-            wget('swagger-codegen-cli.jar' , url)
-            logging.info("Swagger-CodeGen downloaded from: {}".format(url))
+            wget(swagger_codegen_cli_version_jar , url)
+            logging.info(f"Swagger-CodeGen : {swagger_codegen_cli_version_jar} downloaded from: {url}")
         except Exception as e:
             logging.critical(f"Unable to download swaggerCodegen from {url} :exception: {e}")
 
@@ -166,7 +167,7 @@ def codeGen_api(digikeyAPIdef, swaggerCodeGen_config):
     codeGenRunCommand = [
         'java'
         , '-jar'
-        , 'swagger-codegen-cli.jar'
+        , swagger_codegen_cli_version_jar
         , 'generate'
         , '--input-spec',  swaggerSpecFile
         , '-l', 'python'
@@ -175,9 +176,9 @@ def codeGen_api(digikeyAPIdef, swaggerCodeGen_config):
         ]
 
     try:
-        logging.info('STARTING Code generator for a Swagger API created, project name: {projectName}'.format(**swaggerCodeGen_config))
+        logging.info(f'STARTING Code generator:{swagger_codegen_cli_version_jar} for a Swagger API created, project name: {swaggerCodeGen_config['projectName']}')
         procCall = subprocess.run(codeGenRunCommand,stdout=subprocess.PIPE,stderr=subprocess.PIPE) #, shell=True)
-        logging.info('COMPLETED Code generator for a Swagger API created, project name: {projectName}'.format(**swaggerCodeGen_config))
+        logging.info(f'COMPLETED Code generator for a Swagger API created, project name: {swaggerCodeGen_config['projectName']}')
         logging.debug('----- STDOUT = \n{}'.format(procCall.stdout.decode('utf-8')))
         logging.debug('----- STDERR = \n{}'.format(procCall.stderr.decode('utf-8')))
         if procCall.returncode != 0:
