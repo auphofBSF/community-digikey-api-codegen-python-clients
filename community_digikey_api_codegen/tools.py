@@ -60,7 +60,7 @@ if not os.path.exists(TMP_PATH):
     os.makedirs(TMP_PATH)
 os.chdir(TMP_PATH)
 
-swaggerCodeGenURL = 'https://repo1.maven.org/maven2/io/swagger/swagger-codegen-cli/2.4.1/swagger-codegen-cli-2.4.1.jar'
+swaggerCodeGenURL = 'https://repo1.maven.org/maven2/io/swagger/swagger-codegen-cli/2.4.10/swagger-codegen-cli-2.4.10.jar'
 
 swaggerCodeGen_config_all = {
     'product-information':{
