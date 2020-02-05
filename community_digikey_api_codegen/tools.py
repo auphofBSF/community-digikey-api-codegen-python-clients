@@ -54,7 +54,7 @@ import re
 logging.debug("CodeGen Digikey API Clients: module: tools.py is loading ......")
 logging.debug("CodeGen Directory for Digikey API's: {tmpDir}".format(tmpDir=TMP_PATH))
 
-envExecureRoot = os.getcwd()
+envExecuteRoot = os.getcwd()
 
 if not os.path.exists(TMP_PATH):
     os.makedirs(TMP_PATH)
@@ -176,9 +176,9 @@ def codeGen_api(digikeyAPIdef, swaggerCodeGen_config):
         ]
 
     try:
-        logging.info(f'STARTING Code generator:{swagger_codegen_cli_version_jar} for a Swagger API created, project name: {swaggerCodeGen_config['projectName']}')
+        logging.info(f"STARTING Code generator:{swagger_codegen_cli_version_jar} for a Swagger API created, project name: {swaggerCodeGen_config['projectName']}")
         procCall = subprocess.run(codeGenRunCommand,stdout=subprocess.PIPE,stderr=subprocess.PIPE) #, shell=True)
-        logging.info(f'COMPLETED Code generator for a Swagger API created, project name: {swaggerCodeGen_config['projectName']}')
+        logging.info(f"COMPLETED Code generator for a Swagger API created, project name: {swaggerCodeGen_config['projectName']}")
         logging.debug('----- STDOUT = \n{}'.format(procCall.stdout.decode('utf-8')))
         logging.debug('----- STDERR = \n{}'.format(procCall.stderr.decode('utf-8')))
         if procCall.returncode != 0:
