@@ -56,9 +56,6 @@ logging.debug("CodeGen Directory for Digikey API's: {tmpDir}".format(tmpDir=TMP_
 
 envExecuteRoot = os.getcwd()
 
-if not os.path.exists(TMP_PATH):
-    os.makedirs(TMP_PATH)
-os.chdir(TMP_PATH)
 
 swaggerCodeGenURL = 'https://repo1.maven.org/maven2/io/swagger/swagger-codegen-cli/2.4.10/swagger-codegen-cli-2.4.10.jar'
 _, swagger_codegen_cli_version_jar = os.path.split(swaggerCodeGenURL)
@@ -138,18 +135,18 @@ def codeGen_api(digikeyAPIdef, swaggerCodeGen_config):
 
     #setup the CONFIG file
     configFile_swaggerCodegen='{projectName}-config-SwaggerCodegen.json'.format(**swaggerCodeGen_config)
-    with open(configFile_swaggerCodegen, 'w') as outfile:
+    with open(os.path.join(TMP_PATH,configFile_swaggerCodegen), 'w') as outfile:
         json.dump(swaggerCodeGen_config, outfile)
 
     logging.info("Created config file for Swagger Codegen: {}".format(configFile_swaggerCodegen))
 
     #check if the swagger-codgen is present, else download
-    if os.path.isfile(swagger_codegen_cli_version_jar):
+    if os.path.isfile(os.path.join(TMP_PATH,swagger_codegen_cli_version_jar)):
         logging.info(f"Swagger-CodeGen: {swagger_codegen_cli_version_jar} already exists, no download required")
     else:
         try:
             url = swaggerCodeGenURL
-            wget(swagger_codegen_cli_version_jar , url)
+            wget(os.path.join(TMP_PATH,swagger_codegen_cli_version_jar) , url)
             logging.info(f"Swagger-CodeGen : {swagger_codegen_cli_version_jar} downloaded from: {url}")
         except Exception as e:
             logging.critical(f"Unable to download swaggerCodegen from {url} :exception: {e}")
@@ -167,12 +164,12 @@ def codeGen_api(digikeyAPIdef, swaggerCodeGen_config):
     codeGenRunCommand = [
         'java'
         , '-jar'
-        , swagger_codegen_cli_version_jar
+        , os.path.join(TMP_PATH,swagger_codegen_cli_version_jar)
         , 'generate'
         , '--input-spec',  swaggerSpecFile
         , '-l', 'python'
         , '--output', os.path.join(DEST_PATH,'{projectName}'.format(**swaggerCodeGen_config))
-        , '--config', configFile_swaggerCodegen
+        , '--config', os.path.join(TMP_PATH,configFile_swaggerCodegen)
         ]
 
     try:
@@ -211,7 +208,7 @@ def codeGen_api(digikeyAPIdef, swaggerCodeGen_config):
                 logging.critical(message)
                 raise e
 
-        overwriteCopy(configFile_swaggerCodegen,dstPath=codegenDestPath)
+        overwriteCopy(os.path.join(TMP_PATH,configFile_swaggerCodegen),dstPath=codegenDestPath)
         overwriteCopy(swaggerSpecFile,dstPath=codegenDestPath)
         overwriteCopy(__file__, dstPath=codegenDestPath) # Keep a copy of this script that built the client
         logging.info('----- COPIED CodeGen and/or specification files into project')
