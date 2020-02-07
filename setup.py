@@ -104,7 +104,7 @@ def digikeyAPIclientGenerate():
         subprocessCMD = [
         'pip'
         , 'install'
-        , '--editable'
+        # , '--editable'
         , '.'
         ]
         tools.subprocess_run(subprocessCMD)
