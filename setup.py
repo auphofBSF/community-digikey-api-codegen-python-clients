@@ -54,32 +54,32 @@ class PostInstallCommand(install):
         print("----Custom Install - post install.run")
         digikeyAPIclientGenerate()
 #TODO: Generate seem to be called to frequently, identify whic are necssary
-class PostBuild_pyCommand(build_py):
-    """Post-installation for installation mode."""
-    def run(self):
-        # check_call("apt-get install this-package".split())
-        print("----Custom Build_py - pre install.run")
-        build_py.run(self)
-        print("----Custom Build_py - post install.run")
-        digikeyAPIclientGenerate()
+# class PostBuild_pyCommand(build_py):
+#     """Post-installation for installation mode."""
+#     def run(self):
+#         # check_call("apt-get install this-package".split())
+#         print("----Custom Build_py - pre install.run")
+#         build_py.run(self)
+#         print("----Custom Build_py - post install.run")
+#         digikeyAPIclientGenerate()
 
-class PostBdist_eggCommand(bdist_egg):
-    """Post-installation for installation mode."""
-    def run(self):
-        # check_call("apt-get install this-package".split())
-        print("----Custom bdist_egg - pre install.run")
-        bdist_egg.run(self)
-        print("----Custom bdist_egg - post install.run")
-        digikeyAPIclientGenerate()
+# class PostBdist_eggCommand(bdist_egg):
+#     """Post-installation for installation mode."""
+#     def run(self):
+#         # check_call("apt-get install this-package".split())
+#         print("----Custom bdist_egg - pre install.run")
+#         bdist_egg.run(self)
+#         print("----Custom bdist_egg - post install.run")
+#         digikeyAPIclientGenerate()
 
-class PostEgg_infoCommand(egg_info):
-    """Post-installation for installation mode."""
-    def run(self):
-        # check_call("apt-get install this-package".split())
-        print("----Custom egg_info - pre install.run")
-        egg_info.run(self)
-        print("----Custom egg_info - post install.run")
-        digikeyAPIclientGenerate()
+# class PostEgg_infoCommand(egg_info):
+#     """Post-installation for installation mode."""
+#     def run(self):
+#         # check_call("apt-get install this-package".split())
+#         print("----Custom egg_info - pre install.run")
+#         egg_info.run(self)
+#         print("----Custom egg_info - post install.run")
+#         digikeyAPIclientGenerate()
 
 def digikeyAPIclientGenerate():
 
@@ -121,8 +121,8 @@ setup(
     cmdclass={
         'develop': PostDevelopCommand,
         'install': PostInstallCommand,
-        'build_py': PostBuild_pyCommand,
-        'bdist_egg': PostBdist_eggCommand,
+        # 'build_py': PostBuild_pyCommand,
+        # 'bdist_egg': PostBdist_eggCommand,
         # 'egg_info': PostEgg_infoCommand,
 
         },
