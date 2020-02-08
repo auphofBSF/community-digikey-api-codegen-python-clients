@@ -16,10 +16,6 @@
 from setuptools import setup, find_packages  # noqa: H301
 from setuptools.command.develop import develop
 from setuptools.command.install import install
-from setuptools.command.build_py import build_py
-from setuptools.command.bdist_egg import bdist_egg
-from setuptools.command.egg_info import egg_info
-# from setuptools.command.bdist_wheel import bdist_wheel
 
 NAME = "community-digikey-api-codegen-python-clients"
 VERSION = "0.1.0"
@@ -53,33 +49,6 @@ class PostInstallCommand(install):
         install.run(self)
         print("----Custom Install - post install.run")
         digikeyAPIclientGenerate()
-#TODO: Generate seem to be called to frequently, identify whic are necssary
-# class PostBuild_pyCommand(build_py):
-#     """Post-installation for installation mode."""
-#     def run(self):
-#         # check_call("apt-get install this-package".split())
-#         print("----Custom Build_py - pre install.run")
-#         build_py.run(self)
-#         print("----Custom Build_py - post install.run")
-#         digikeyAPIclientGenerate()
-
-# class PostBdist_eggCommand(bdist_egg):
-#     """Post-installation for installation mode."""
-#     def run(self):
-#         # check_call("apt-get install this-package".split())
-#         print("----Custom bdist_egg - pre install.run")
-#         bdist_egg.run(self)
-#         print("----Custom bdist_egg - post install.run")
-#         digikeyAPIclientGenerate()
-
-# class PostEgg_infoCommand(egg_info):
-#     """Post-installation for installation mode."""
-#     def run(self):
-#         # check_call("apt-get install this-package".split())
-#         print("----Custom egg_info - pre install.run")
-#         egg_info.run(self)
-#         print("----Custom egg_info - post install.run")
-#         digikeyAPIclientGenerate()
 
 def digikeyAPIclientGenerate():
 
@@ -121,10 +90,6 @@ setup(
     cmdclass={
         'develop': PostDevelopCommand,
         'install': PostInstallCommand,
-        # 'build_py': PostBuild_pyCommand,
-        # 'bdist_egg': PostBdist_eggCommand,
-        # 'egg_info': PostEgg_infoCommand,
-
         },
     setup_requires =  ['requests'],
     install_requires=REQUIRES,
